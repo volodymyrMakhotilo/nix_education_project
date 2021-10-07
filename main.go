@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
-	"os"
 )
 
 const domain string = "https://jsonplaceholder.typicode.com"
@@ -21,6 +21,13 @@ func getPost(index int, c chan []byte) {
 	defer resp.Body.Close()
 	c <- body
 }
+func CreateFile(data []byte) {
+	file, err := ioutil.TempFile("./storage/posts", "post")
+	if err != nil {
+		panic(err)
+	}
+	file.Write(data)
+}
 
 func main() {
 	c := make(chan []byte, 100)
@@ -28,6 +35,6 @@ func main() {
 		go getPost(i, c)
 	}
 	for i := 1; i <= 100; i++ {
-		os.Stdout.Write(<-c)
+		CreateFile(<-c)
 	}
 }
