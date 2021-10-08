@@ -15,12 +15,12 @@ import (
 const domain string = "https://jsonplaceholder.typicode.com"
 const userID int = 7
 
+var db *sql.DB
+
 func AddComment(comment models.Comment) {
 	log.Println("Entered addComments")
-	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/beginner")
-	_, _ = db.Query("INSERT  INTO `beginner`.`comments`(post_id,name,email,body)" + fmt.Sprintf("VALUES(%v,'%v','%v','%v') ", comment.PostId, comment.Name, comment.Email, comment.Body))
-	/*	defer rows.Close();*/
-	defer db.Close()
+	rows, err := db.Query("INSERT  INTO `beginner`.`comments`(post_id,name,email,body)" + fmt.Sprintf("VALUES(%v,'%v','%v','%v') ", comment.PostId, comment.Name, comment.Email, comment.Body))
+	defer rows.Close()
 	if err != nil {
 		panic(err)
 	}
@@ -91,6 +91,8 @@ func CreateFile(data []byte) {
 
 func main() {
 	var err error
+	db, err = sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/beginner")
+	defer db.Close()
 	if err != nil {
 		panic(err)
 	}
