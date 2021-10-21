@@ -19,8 +19,9 @@ var db *sql.DB
 
 func AddComment(comment models.Comment) {
 	log.Println("Entered addComments")
-	rows, err := db.Query("INSERT  INTO `beginner`.`comments`(post_id,name,email,body)" + fmt.Sprintf("VALUES(%v,'%v','%v','%v') ", comment.PostId, comment.Name, comment.Email, comment.Body))
-	defer rows.Close()
+	db, _ = sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/beginner")
+	_, err := db.Exec("INSERT  INTO `beginner`.`comments`(post_id,name,email,body)" + fmt.Sprintf("VALUES(%v,'%v','%v','%v') ", comment.PostId, comment.Name, comment.Email, comment.Body))
+	defer db.Close()
 	if err != nil {
 		panic(err)
 	}
@@ -91,8 +92,6 @@ func CreateFile(data []byte) {
 
 func main() {
 	var err error
-	db, err = sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/beginner")
-	defer db.Close()
 	if err != nil {
 		panic(err)
 	}
